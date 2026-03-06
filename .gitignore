@@ -1,0 +1,34 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/Editor-specific
+.DS_Store
+.vscode/
+.idea/
+
+# Temporary/Diagnostic files
+error_dump.json
+error_dump.json
+seeder_output.txt
+debug-output.txt
+debug-order.js
+error-dumper.js
+test-mongo.js
+test-rzp.js
+fix-indexes.js
+debug-output.txt
