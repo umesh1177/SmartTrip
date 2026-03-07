@@ -9,22 +9,18 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        fromConfig: MONGO_URI
+        value: mongodb://localhost:27017/smarttrip
       - key: JWT_SECRET
-        fromConfig: JWT_SECRET
+        value: your_jwt_secret_key_here
       - key: RAZORPAY_KEY_ID
-        fromConfig: RAZORPAY_KEY_ID
+        value: rzp_test_RhVYKPOupv38C4
       - key: RAZORPAY_KEY_SECRET
-        fromConfig: RAZORPAY_KEY_SECRET
-      - key: CLOUDINARY_CLOUD_NAME
-        fromConfig: CLOUDINARY_CLOUD_NAME
-      - key: CLOUDINARY_API_KEY
-        fromConfig: CLOUDINARY_API_KEY
-      - key: CLOUDINARY_API_SECRET
-        fromConfig: CLOUDINARY_API_SECRET
+        value: YfX6poJ2kdF26aKSAIg2Ljd8
       - key: GOOGLE_MAPS_API_KEY
-        fromConfig: GOOGLE_MAPS_API_KEY
-      - key: EMAIL_USER
-        fromConfig: EMAIL_USER
-      - key: EMAIL_PASS
-        fromConfig: EMAIL_PASS
+        value: your_google_places_api_key_here
+      - key: ADMIN_SECRET_KEY
+        value: smarttrip_admin_2024
+      - key: STRIPE_SECRET_KEY
+        value: your_stripe_secret_key_here
+      - key: MOCK_PAYMENT
+        value: "true"
