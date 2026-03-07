@@ -14,17 +14,49 @@ const generateToken = (id) => {
 // @access  Public
 exports.register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role, adminSecretKey } = req.body;
+
+        // Allowed roles for self-registration
+        const allowedRoles = ['free', 'guide', 'driver'];
+
+        // Admin role requires secret key
+        if (role === 'admin') {
+            if (adminSecretKey !== process.env.ADMIN_SECRET_KEY) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Invalid admin secret key'
+                });
+            }
+        }
+
+        // b2b_admin registered only by admin (not self-register)
+        if (role === 'b2b_admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'B2B admin accounts are created by admin only'
+            });
+        }
+
+        // premium role cannot be self-assigned
+        if (role === 'premium') {
+            return res.status(403).json({
+                success: false,
+                message: 'Premium access requires subscription'
+            });
+        }
+
+        const finalRole = allowedRoles.includes(role) ? role :
+            role === 'admin' ? 'admin' : 'free';
 
         // Check if all fields are provided
         if (!name || !email || !password) {
-            return res.status(400).json({ message: 'Please provide all required fields' });
+            return res.status(400).json({ success: false, message: 'Please provide all required fields' });
         }
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ success: false, message: 'Email already registered' });
         }
 
         // Hash password
@@ -36,24 +68,26 @@ exports.register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            role: req.body.role || 'free',
+            role: finalRole,
         });
 
         if (user) {
             res.status(201).json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                savedPlaces: user.savedPlaces,
+                success: true,
                 token: generateToken(user._id),
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
             });
         } else {
-            res.status(400).json({ message: 'Invalid user data' });
+            res.status(400).json({ success: false, message: 'Invalid user data' });
         }
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ message: 'Server error during registration' });
+        res.status(500).json({ success: false, message: 'Server error during registration' });
     }
 };
 
@@ -66,34 +100,46 @@ exports.login = async (req, res) => {
 
         // Check if email and password are provided
         if (!email || !password) {
-            return res.status(400).json({ message: 'Please provide email and password' });
+            return res.status(400).json({ success: false, message: 'Please provide email and password' });
         }
 
         // Check for user
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
+        const redirectMap = {
+            'admin': '/admin/dashboard',
+            'guide': '/guide/dashboard',
+            'driver': '/driver/app',
+            'free': '/explore',
+            'premium': '/explore',
+            'b2b_admin': '/b2b/dashboard'
+        };
+
         res.json({
-            _id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            savedPlaces: user.savedPlaces,
+            success: true,
             token: generateToken(user._id),
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            },
+            redirectTo: redirectMap[user.role] || '/explore'
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error during login' });
+        res.status(500).json({ success: false, message: 'Server error during login' });
     }
 };
 

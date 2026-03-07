@@ -42,8 +42,9 @@ const TripTimeline = () => {
     };
 
     if (loading) return <div className="flex items-center justify-center h-96">Loading Timeline...</div>;
+    if (!trip || !budgetData) return <div className="flex items-center justify-center h-96 text-gray-500 font-bold">Trip data unavailable. Please try again later.</div>;
 
-    const budgetPercent = (budgetData.spent / budgetData.total) * 100;
+    const budgetPercent = budgetData.total > 0 ? (budgetData.spent / budgetData.total) * 100 : 0;
 
     return (
         <div className="max-w-5xl mx-auto p-4 md:p-8">

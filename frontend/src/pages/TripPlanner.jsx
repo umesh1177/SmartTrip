@@ -11,6 +11,7 @@ import {
     Calendar,
     Users,
     Hotel,
+    Info,
     Plane,
     Train,
     Bus,
@@ -37,17 +38,17 @@ export default function TripPlanner() {
     // Passed from Explore or Home page
     const destination = location.state?.destination;
 
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(location.state?.selectedHotel ? 2 : 1);
     const [loading, setLoading] = useState(false);
     const [stats, setStats] = useState(null);
 
     // Form State
     const [tripDetails, setTripDetails] = useState({
-        title: '',
+        title: location.state?.selectedHotel ? `Trip to ${destination?.name || 'Destination'}` : '',
         startDate: '',
         endDate: '',
         travelers: 1,
-        selectedHotel: null,
+        selectedHotel: location.state?.selectedHotel || null,
         transport: {
             type: 'flight', // flight, train, bus
             options: [],
@@ -69,7 +70,10 @@ export default function TripPlanner() {
             return;
         }
         fetchStats();
-    }, [destination]);
+        if (step === 2 && hotels.length === 0) {
+            fetchHotels();
+        }
+    }, [destination, step]);
 
     const fetchStats = async () => {
         try {
@@ -172,7 +176,7 @@ export default function TripPlanner() {
             }
 
             toast.success('Trip planned and saved successfully! ✈️');
-            navigate('/saved');
+            navigate('/my-trips');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Error saving trip');
         } finally {
@@ -313,9 +317,19 @@ export default function TripPlanner() {
                                     </span>
                                 </div>
                             )}
-                            <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">
-                                <span className="text-sm font-black text-gray-900">${hotel.pricePerNight}</span>
-                                <span className="text-[10px] text-gray-500 ml-1">/ night</span>
+                            <div className="absolute bottom-4 right-4 flex flex-col items-end gap-2">
+                                <Link
+                                    to={`/hotel/${hotel._id}`}
+                                    target="_blank"
+                                    className="bg-white/95 backdrop-blur-sm p-2 rounded-lg shadow-sm text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-lg"
+                                    title="View Full Details"
+                                >
+                                    <Info className="w-4 h-4" />
+                                </Link>
+                                <div className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">
+                                    <span className="text-sm font-black text-gray-900">${hotel.pricePerNight}</span>
+                                    <span className="text-[10px] text-gray-500 ml-1">/ night</span>
+                                </div>
                             </div>
                         </div>
 

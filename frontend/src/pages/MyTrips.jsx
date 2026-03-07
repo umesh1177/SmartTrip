@@ -29,7 +29,7 @@ export default function MyTrips() {
                 axios.get('/api/trips'),
                 axios.get('/api/trips/stats')
             ]);
-            setTrips(tripsRes.data);
+            setTrips(tripsRes.data.data || []);
             setStats(statsRes.data);
         } catch (error) {
             toast.error('Failed to load trips');
@@ -124,7 +124,12 @@ export default function MyTrips() {
                         {filteredTrips.map(trip => (
                             <div key={trip._id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 group">
                                 <div className="relative h-48">
-                                    <img src={trip.destination?.image || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
+                                    <img
+                                        src={trip.destination?.image || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800"}
+                                        onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1488646953014-85cb44e25828"; }}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        alt=""
+                                    />
                                     <div className="absolute top-4 left-4">
                                         {getStatusBadge(trip.status)}
                                     </div>
@@ -139,9 +144,9 @@ export default function MyTrips() {
                                         <div className="flex items-center text-sm font-bold text-gray-400">
                                             <MapPin className="w-4 h-4 mr-1 text-gray-300" /> {trip.destination?.country}
                                         </div>
-                                        <button className="flex items-center gap-1 text-sm font-black text-gray-900 group-hover:translate-x-1 transition-transform">
+                                        <Link to={`/trips/${trip._id}/timeline`} className="flex items-center gap-1 text-sm font-black text-gray-900 group-hover:translate-x-1 transition-transform">
                                             View Details <ChevronRight className="w-4 h-4" />
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

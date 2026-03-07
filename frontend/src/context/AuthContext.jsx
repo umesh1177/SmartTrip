@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const res = await axios.post('/api/auth/login', { email, password });
-            const { token: newToken, ...userData } = res.data;
+            const { token: newToken, user: userData, redirectTo } = res.data;
 
             setUser(userData);
             setToken(newToken);
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('token', newToken);
 
-            return { success: true };
+            return { success: true, redirectTo };
         } catch (error) {
             return {
                 success: false,
@@ -72,10 +72,12 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password, role = 'free') => {
+    const register = async (name, email, password, role = 'free', extraData = {}) => {
         try {
-            const res = await axios.post('/api/auth/register', { name, email, password, role });
-            const { token: newToken, ...userData } = res.data;
+            const res = await axios.post('/api/auth/register', {
+                name, email, password, role, ...extraData
+            });
+            const { token: newToken, user: userData } = res.data;
 
             setUser(userData);
             setToken(newToken);
@@ -106,9 +108,15 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(updatedUser));
     };
 
+    // Helper properties/functions
     // Helper properties
     const isLoggedIn = !!user;
+    const isAdmin = user?.role === 'admin';
+    const isGuide = user?.role === 'guide';
+    const isDriver = user?.role === 'driver';
     const isPremium = user?.role === 'premium';
+    const isHotelPartner = user?.role === 'hotel_partner';
+    const isB2B = user?.role === 'b2b_admin';
 
     return (
         <AuthContext.Provider
@@ -120,8 +128,14 @@ export const AuthProvider = ({ children }) => {
                 register,
                 logout,
                 updateProfile,
+                setUser,
                 isLoggedIn,
-                isPremium
+                isAdmin,
+                isGuide,
+                isDriver,
+                isPremium,
+                isHotelPartner,
+                isB2B
             }}
         >
             {!loading && children}

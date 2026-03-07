@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Plane, Menu, X, LogOut, Bookmark, Settings, Star, Search, ShieldCheck } from 'lucide-react';
 
 export default function Navbar() {
-    const { user, logout, isLoggedIn, isPremium } = useAuth();
+    const { user, logout, isLoggedIn, isPremium, isAdmin } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -27,12 +27,13 @@ export default function Navbar() {
         setIsProfileDropdownOpen(false);
     }, [location.pathname]);
 
-    const isAdmin = user?.role === 'admin';
+    // isAdmin and isPremium are now booleans directly from useAuth
 
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'Explore', path: '/explore' },
         { name: 'Pricing', path: '/pricing' },
+        { name: 'Partner With Us', path: '/hotel-partner/register' },
     ];
 
     return (
@@ -115,6 +116,11 @@ export default function Navbar() {
                                         <Link to="/saved" className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
                                             <Bookmark className="w-4 h-4 mr-3 text-gray-400" />
                                             My Saved Places
+                                        </Link>
+
+                                        <Link to="/my-trips" className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                            <Plane className="w-4 h-4 mr-3 text-gray-400" />
+                                            My Trips
                                         </Link>
 
                                         <Link to="/search" className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
@@ -224,6 +230,9 @@ export default function Navbar() {
                                 <div className="mt-3 px-2 space-y-1">
                                     <Link to="/saved" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50">
                                         My Saved Places
+                                    </Link>
+                                    <Link to="/my-trips" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50">
+                                        My Trips
                                     </Link>
                                     <Link to="/search" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50">
                                         Search Places

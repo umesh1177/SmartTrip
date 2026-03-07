@@ -14,12 +14,12 @@ exports.getTripTimeline = async (req, res) => {
         const activities = await TripActivity.find({ tripPlanId: req.params.tripId }).sort('createdAt');
 
         // Group by day
-        const grouped = activities.reduce((acc, activity) => {
+        const groupedMap = activities.reduce((acc, activity) => {
             const dayNum = differenceInDays(startOfDay(activity.createdAt), startOfDay(trip.startDate)) + 1;
-            const dayKey = `Day ${dayNum >= 1 ? dayNum : 0}`;
+            const dateStr = format(activity.createdAt, 'MMM dd, yyyy');
 
-            if (!acc[dayKey]) acc[dayKey] = [];
-            acc[dayKey].push({
+            if (!acc[dateStr]) acc[dateStr] = { date: dateStr, activities: [] };
+            acc[dateStr].activities.push({
                 id: activity._id,
                 time: format(activity.createdAt, 'hh:mm a'),
                 type: activity.type,
@@ -31,11 +31,35 @@ exports.getTripTimeline = async (req, res) => {
             return acc;
         }, {});
 
-        res.json(grouped);
+        res.json(Object.values(groupedMap));
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Get trip budget statistics
+// @route   GET /api/trips/:tripId/budget
+exports.getTripBudget = async (req, res) => {
+    try {
+        const trip = await TripPlan.findById(req.params.tripId);
+        if (!trip) return res.status(404).json({ message: "Trip not found" });
+
+        const budgetTracker = trip.budgetTracker.toObject();
+        const spent = Object.keys(budgetTracker)
+            .filter(k => k !== 'total' && k !== 'remaining' && typeof budgetTracker[k] === 'number' && k !== '_id')
+            .reduce((sum, key) => sum + budgetTracker[key], 0);
+
+        res.json({
+            total: budgetTracker.total || trip.totalBudget || 1000, // Fallback for demo
+            spent: spent,
+            remaining: (budgetTracker.total || trip.totalBudget || 1000) - spent,
+            categories: budgetTracker
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // @desc    Log a trip activity (Manual or Internal)
 // @route   POST /api/trips/:tripId/activity

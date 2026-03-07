@@ -35,11 +35,11 @@ const hotelSchema = new mongoose.Schema({
     },
     currency: {
         type: String,
-        default: 'USD'
+        default: 'INR'
     },
     category: {
         type: String,
-        enum: ['budget', 'moderate', 'luxury', '5-star'],
+        enum: ['budget', 'moderate', 'luxury', '5-star', 'boutique'],
         required: true
     },
     amenities: [{
@@ -76,6 +76,14 @@ const hotelSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Place',
         required: true
+    },
+    addedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    addedByAdmin: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

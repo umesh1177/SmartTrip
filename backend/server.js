@@ -59,6 +59,7 @@ const driverRoutes = require('./routes/driverRoutes');
 const endOfTripRoutes = require('./routes/endOfTripRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const hotelPartnerRoutes = require('./routes/hotelPartnerRoutes');
 
 const { notificationScheduler, tripCompletionChecker } = require('./services/notificationService');
 const { checkEndOfTripOpportunity } = require('./services/endOfTripService');
@@ -82,6 +83,7 @@ app.use('/api/driver', driverRoutes);
 app.use('/api/trips', endOfTripRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/hotel-partner', hotelPartnerRoutes);
 
 // Initialize Schedulers
 notificationScheduler();

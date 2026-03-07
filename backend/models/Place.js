@@ -264,6 +264,14 @@ const placeSchema = new mongoose.Schema(
             enum: ['manual', 'google', 'user_generated'],
             default: 'manual',
         },
+        addedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        addedByAdmin: {
+            type: Boolean,
+            default: false
+        }
     },
     {
         timestamps: true,

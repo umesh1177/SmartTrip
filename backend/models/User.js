@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ['free', 'premium', 'guide', 'driver', 'b2b_admin', 'admin'],
+            enum: ['free', 'premium', 'guide', 'driver', 'hotel_partner', 'admin', 'b2b_admin'],
             default: 'free',
         },
         premiumExpiresAt: {
@@ -55,7 +55,42 @@ const userSchema = new mongoose.Schema(
                 name: String,
                 earnedAt: { type: Date, default: Date.now }
             }
-        ]
+        ],
+        hotelPartnerInfo: {
+            businessName: String,
+            ownerName: String,
+            businessPhone: String,
+            businessEmail: String,
+            city: String,
+            state: String,
+            country: { type: String, default: 'India' },
+            gstNumber: String,
+            businessType: {
+                type: String,
+                enum: ['hotel', 'resort', 'homestay', 'hostel', 'villa', 'guesthouse'],
+                default: 'hotel'
+            },
+            subscriptionPlan: {
+                type: String,
+                enum: ['none', 'basic', 'featured', 'premium'],
+                default: 'none'
+            },
+            subscriptionStatus: {
+                type: String,
+                enum: ['inactive', 'active', 'expired', 'cancelled'],
+                default: 'inactive'
+            },
+            subscriptionStartDate: Date,
+            subscriptionEndDate: Date,
+            stripeCustomerId: String,
+            stripeSubscriptionId: String,
+            hotelFormSubmitted: { type: Boolean, default: false },
+            hotelFormSubmittedAt: Date,
+            hotelApprovedByAdmin: { type: Boolean, default: false },
+            hotelId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hotel' },
+            totalReferrals: { type: Number, default: 0 },
+            totalClicks: { type: Number, default: 0 }
+        }
     },
     {
         timestamps: true,

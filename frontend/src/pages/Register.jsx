@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User as UserIcon, Plane, CheckCircle2, XCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,7 +11,10 @@ export default function Register() {
         email: '',
         password: '',
         confirmPassword: '',
-        role: 'free'
+        role: 'free',
+        specialization: '',
+        city: '',
+        vehicleType: ''
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -54,11 +58,22 @@ export default function Register() {
 
         setIsLoading(true);
 
-        const result = await register(formData.name, formData.email, formData.password, formData.role);
+        const result = await register(
+            formData.name,
+            formData.email,
+            formData.password,
+            formData.role,
+            {
+                specialization: formData.specialization,
+                city: formData.city,
+                vehicleType: formData.vehicleType,
+                adminSecretKey: formData.adminSecretKey // Added this field
+            }
+        );
 
         if (result.success) {
             toast.success('Account created successfully!');
-            navigate('/'); // Redirect to homepage
+            navigate('/login'); // Redirect to login after registration
         } else {
             toast.error(result.message);
         }
@@ -185,20 +200,115 @@ export default function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-purple-200 mb-1">Account Role</label>
+                            <label className="block text-sm font-medium text-purple-200 mb-1">Join As</label>
                             <div className="relative">
                                 <select
                                     name="role"
                                     value={formData.role}
                                     onChange={handleChange}
-                                    className="block w-full pl-4 pr-10 py-3 border border-white/20 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                                    className="block w-full pl-4 pr-10 py-3 border border-white/20 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-bold"
                                 >
-                                    <option value="free">Free User</option>
-                                    <option value="premium">Premium User</option>
+                                    <option value="free">Traveler</option>
+                                    <option value="guide">Tour Guide</option>
+                                    <option value="driver">Cab Driver</option>
                                     <option value="admin">System Admin</option>
                                 </select>
                             </div>
                         </div>
+
+                        {/* Admin Secret Key */}
+                        {formData.role === 'admin' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                            >
+                                <label className="block text-sm font-medium text-amber-300 mb-1 flex items-center gap-2">
+                                    <Lock size={14} /> Admin Verification Key
+                                </label>
+                                <input
+                                    type="password"
+                                    name="adminSecretKey"
+                                    required
+                                    value={formData.adminSecretKey || ''}
+                                    onChange={handleChange}
+                                    className="block w-full px-4 py-3 border border-amber-500/30 rounded-xl bg-amber-500/10 text-white placeholder-amber-200/50 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-medium"
+                                    placeholder="Enter system secret"
+                                />
+                                <p className="text-[10px] text-amber-400 mt-2 font-bold uppercase tracking-wider italic">Only authorized staff can register as admin</p>
+                            </motion.div>
+                        )}
+
+                        {/* Conditional Fields for Guide */}
+                        {formData.role === 'guide' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-4"
+                            >
+                                <div>
+                                    <label className="block text-sm font-medium text-purple-200 mb-1">Specialization</label>
+                                    <input
+                                        type="text"
+                                        name="specialization"
+                                        required
+                                        value={formData.specialization}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                                        placeholder="e.g. Historical, Adventure"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-purple-200 mb-1">City</label>
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        required
+                                        value={formData.city}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                                        placeholder="Your base city"
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Conditional Fields for Driver */}
+                        {formData.role === 'driver' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-4"
+                            >
+                                <div>
+                                    <label className="block text-sm font-medium text-purple-200 mb-1">Vehicle Type</label>
+                                    <select
+                                        name="vehicleType"
+                                        required
+                                        value={formData.vehicleType}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-3 border border-white/20 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                                    >
+                                        <option value="">Select vehicle</option>
+                                        <option value="sedan">Sedan</option>
+                                        <option value="suv">SUV</option>
+                                        <option value="hatchback">Hatchback</option>
+                                        <option value="luxury">Luxury</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-purple-200 mb-1">City</label>
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        required
+                                        value={formData.city}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                                        placeholder="Service city"
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
 
                         <button
                             type="submit"
@@ -214,6 +324,7 @@ export default function Register() {
                                 'Create Account'
                             )}
                         </button>
+
                     </form>
 
                     <div className="mt-8 text-center text-sm text-purple-200">

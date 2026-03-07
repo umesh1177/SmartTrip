@@ -21,7 +21,8 @@ export default function Login() {
 
         if (result.success) {
             toast.success('Welcome back!');
-            navigate('/'); // Redirect to homepage
+            const redirectTo = result.redirectTo || '/explore';
+            navigate(redirectTo);
         } else {
             toast.error(result.message);
         }
