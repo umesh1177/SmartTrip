@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: smarttrip
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromConfig: MONGO_URI
+      - key: JWT_SECRET
+        fromConfig: JWT_SECRET
+      - key: RAZORPAY_KEY_ID
+        fromConfig: RAZORPAY_KEY_ID
+      - key: RAZORPAY_KEY_SECRET
+        fromConfig: RAZORPAY_KEY_SECRET
+      - key: CLOUDINARY_CLOUD_NAME
+        fromConfig: CLOUDINARY_CLOUD_NAME
+      - key: CLOUDINARY_API_KEY
+        fromConfig: CLOUDINARY_API_KEY
+      - key: CLOUDINARY_API_SECRET
+        fromConfig: CLOUDINARY_API_SECRET
+      - key: GOOGLE_MAPS_API_KEY
+        fromConfig: GOOGLE_MAPS_API_KEY
+      - key: EMAIL_USER
+        fromConfig: EMAIL_USER
+      - key: EMAIL_PASS
+        fromConfig: EMAIL_PASS

@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
+const path = require('path');
 const { initSocket } = require('./services/socketService');
 
 const app = express();
@@ -90,10 +91,18 @@ notificationScheduler();
 tripCompletionChecker();
 cron.schedule('0 */6 * * *', checkEndOfTripOpportunity);
 
-// Basic Route
-app.get('/', (req, res) => {
-    res.send('SmartTrip API is running...');
-});
+// Serve Frontend in Production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.send('SmartTrip API is running...');
+    });
+}
 
 // Start Server
 server.listen(PORT, () => {
