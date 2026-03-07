@@ -9,7 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        value: mongodb://localhost:27017/smarttrip
+        value: mongodb+srv://saumilnainuji667_db_user:SaumilNainuji5533@cluster0.e2vs2aj.mongodb.net/SmartTrip?retryWrites=true&w=majority
       - key: JWT_SECRET
         value: your_jwt_secret_key_here
       - key: RAZORPAY_KEY_ID
