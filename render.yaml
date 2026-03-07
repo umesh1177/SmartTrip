@@ -6,6 +6,8 @@ services:
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
       - key: MONGO_URI
         value: mongodb+srv://saumilnainuji667_db_user:SaumilNainuji5533@cluster0.e2vs2aj.mongodb.net/SmartTrip?retryWrites=true&w=majority
       - key: JWT_SECRET
