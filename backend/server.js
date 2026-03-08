@@ -93,10 +93,17 @@ cron.schedule('0 */6 * * *', checkEndOfTripOpportunity);
 
 // Serve Frontend in Production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+    const distPath = path.resolve(__dirname, '..', 'frontend', 'dist');
+    console.log('Production mode: Serving static files from', distPath);
 
-    app.get(/.*/, (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
+    app.use(express.static(distPath));
+
+    app.get('/:any(.*)', (req, res, next) => {
+        // Do not handle API routes with the frontend catch-all
+        if (req.url.startsWith('/api')) {
+            return next();
+        }
+        res.sendFile(path.join(distPath, 'index.html'));
     });
 } else {
     app.get('/', (req, res) => {
