@@ -109,6 +109,22 @@ export default function HotelPartnerDashboard() {
     };
 
     // ── RENDER HELPERS ──
+    const handleSubscription = async (plan) => {
+        try {
+            const res = await axios.post("/api/hotel-partner/subscribe", { plan });
+            if (res.data.success) {
+                if (res.data.mock) {
+                    toast.success("Mock payment successful! Subscription active.");
+                    fetchDashboardData();
+                } else {
+                    window.location.href = res.data.checkoutUrl;
+                }
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Checkout failed");
+        }
+    };
+
     const renderSubscriptionPlans = () => (
         <div className="py-10">
             <div className="text-center mb-16">
@@ -119,13 +135,13 @@ export default function HotelPartnerDashboard() {
                 {['basic', 'featured', 'premium'].map((plan) => (
                     <div key={plan} className={`bg-white p-8 rounded-[2.5rem] border-2 transition-all ${plan === 'featured' ? 'border-blue-500 shadow-2xl scale-105' : 'border-gray-100 shadow-sm'}`}>
                         <h3 className="text-2xl font-black capitalize mb-4">{plan}</h3>
-                        <div className="text-4xl font-black mb-6">${plan === 'basic' ? '49' : plan === 'featured' ? '99' : '149'}<span className="text-sm text-gray-400 font-bold">/mo</span></div>
+                        <div className="text-4xl font-black mb-6">{plan === 'basic' ? '₹4,000' : plan === 'featured' ? '₹8,000' : '₹12,000'}<span className="text-sm text-gray-400 font-bold">/mo</span></div>
                         <ul className="space-y-3 mb-10">
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-600"><CheckCircle2 className="text-green-500" size={16} /> Business Listing</li>
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-600"><CheckCircle2 className="text-green-500" size={16} /> Direct Inquiries</li>
                             {plan !== 'basic' && <li className="flex items-center gap-2 text-sm font-bold text-gray-600"><CheckCircle2 className="text-green-500" size={16} /> Featured Badge</li>}
                         </ul>
-                        <button onClick={() => axios.post("/api/hotel-partner/subscribe", { plan }).then(res => window.location.href = res.data.checkoutUrl).catch(() => toast.error("Checkout failed"))} className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-500/20 active:scale-95 transition-all">Select {plan}</button>
+                        <button onClick={() => handleSubscription(plan)} className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-500/20 active:scale-95 transition-all">Select {plan}</button>
                     </div>
                 ))}
             </div>

@@ -85,9 +85,10 @@ exports.createSubscriptionCheckout = async (req, res) => {
                 'hotelPartnerInfo.stripeSubscriptionId': 'sub_mock_' + Date.now()
             });
 
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
             return res.json({
                 success: true,
-                checkoutUrl: `${process.env.FRONTEND_URL}/hotel-partner/dashboard?payment=success&plan=${plan}`,
+                checkoutUrl: `${frontendUrl}/hotel-partner/dashboard?payment=success&plan=${plan}`,
                 mock: true
             });
         }
