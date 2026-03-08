@@ -98,9 +98,9 @@ export default function Navbar() {
                                         {user?.name}
                                     </span>
                                     {isPremium && (
-                                        <div className="flex items-center bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-bold border border-amber-200 mr-2">
-                                            <Star className="w-3 h-3 mr-1 fill-amber-500 text-amber-500" />
-                                            Premium
+                                        <div className="flex items-center bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-950 px-3 py-1 rounded-full text-[10px] font-black border border-amber-300 shadow-sm ml-2 group-hover:scale-105 transition-transform">
+                                            <Star className="w-3 h-3 mr-1 fill-amber-900 text-amber-900" />
+                                            PREMIUM
                                         </div>
                                     )}
                                 </button>
@@ -218,9 +218,9 @@ export default function Navbar() {
                                         <div className="text-base font-medium text-gray-800 flex items-center">
                                             {user?.name}
                                             {isPremium && (
-                                                <span className="ml-2 flex items-center bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-bold border border-amber-200">
-                                                    <Star className="w-3 h-3 mr-1 fill-amber-500 text-amber-500" />
-                                                    Premium
+                                                <span className="ml-2 flex items-center bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-950 px-2.5 py-0.5 rounded-full text-[10px] font-black border border-amber-300 shadow-sm">
+                                                    <Star className="w-3 h-3 mr-1 fill-amber-900 text-amber-900" />
+                                                    PREMIUM
                                                 </span>
                                             )}
                                         </div>

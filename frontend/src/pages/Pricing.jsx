@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 export default function Pricing() {
     const [isAnnual, setIsAnnual] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const { user, isPremium } = useAuth();
+    const { user, isPremium, updateProfile } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -79,20 +79,28 @@ export default function Pricing() {
                 },
                 handler: async function (response) {
                     try {
+                        // Verify payment on backend
                         const verifyRes = await axios.post('/api/payment/verify', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
-                            plan: data.order.plan
-                        }, config);
+                            plan: plan
+                        }, config); // Keep config for authorization
 
                         if (verifyRes.data.success) {
-                            toast.success(verifyRes.data.message);
-                            // Refresh page to load updated premium role into AuthContext
-                            window.location.href = '/dashboard';
+                            toast.success('Welcome to Premium!', { id: 'verify-success' });
+
+                            // Update local profile immediately so UI reflects premium status
+                            updateProfile({ role: 'premium' });
+
+                            // Redirect to Explore page (dashboard was 404)
+                            navigate('/explore');
+                        } else {
+                            toast.error('Payment verification failed');
                         }
-                    } catch (err) {
-                        toast.error(err.response?.data?.message || 'Payment verification failed');
+                    } catch (error) {
+                        console.error('Payment Error:', error);
+                        toast.error(error.response?.data?.message || 'Payment failed');
                     }
                 }
             };
